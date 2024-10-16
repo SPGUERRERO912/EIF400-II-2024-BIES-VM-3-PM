@@ -7,5 +7,9 @@
   "opts": {
     "destination": "docs",
     "recurse": true
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
   }
 }
