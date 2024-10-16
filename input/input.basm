@@ -1,7 +1,41 @@
 $FUN $0 args : 0 parent : $0
-
+LDV 666
+BST 0 0 ; let x = 1
+LDF $1 ;crea clausura de $1 (denotamos como [$1]) y pone en pila
+BST 0 1 ; foo = [$1]
+LDV 6
+LDV 5
 LDV 4
-LDV [1,2,"Hola"]
-LIN
+LDV 3
+BLD 0 1 ; [$1] en pila
+APP 1   ; $1(3). Cuando retorne habrá una clausura [$2]
+APP 1   ; $2(4)
+APP 1   ; $3(5)
+APP 1   ; $4(6)
+PRN     ; print(3+4+5+6)
+BLD 0 0 ;sacamos 666
 PRN
+HLT    ; el compilador añade un hlt al final del main
 $END $0
+$FUN $1 args : 1 parent : $0
+LDF $2 ; crea clausura [$2] y pone en pila
+RET 
+$END $1
+$FUN $2 args : 1 parent : $1
+LDF $3 ; crea clausura [$3] y pone en pila
+RET 
+$END $2
+$FUN $3 args : 1 parent : $2
+LDF $4 ; crea clausura [$4] y pone en pila
+RET 
+$END $3
+$FUN $4 args : 1 parent : $3
+BLD 3 0
+BLD 2 0
+ADD
+BLD 1 0
+ADD
+BLD 0 0
+ADD
+RET
+$END $4
