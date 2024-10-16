@@ -1,3 +1,5 @@
+# EIF400-II-2024-BIESVM-P1-3-00 PM - Joel Ramirez Vargas
+
 ## Proceso de Build Automatizado Completo
 
 Para preparar y construir el proyecto, sigue estos pasos:
@@ -7,3 +9,4 @@ Para preparar y construir el proyecto, sigue estos pasos:
 
    ```bash
    npm run build
+
