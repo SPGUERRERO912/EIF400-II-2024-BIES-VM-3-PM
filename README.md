@@ -1,5 +1,9 @@
 # EIF400 II 2024 BIESVM P1 3:00 PM - Joel Ramirez Vargas
-
+### Integrantes 50994
+- Joel Ramírez Vargas 119020788 [Coordinador]
+- Marco Leandro Chacón 118510803
+- Sebastián Peñaranda Guerrero 118440262
+- Valentina Hernández Quesada 118710693    
 ## Proceso de Build Automatizado Completo
 
 Para preparar y construir el proyecto, sigue estos pasos:
