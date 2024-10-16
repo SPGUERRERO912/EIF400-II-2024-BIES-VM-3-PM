@@ -11,40 +11,47 @@ directive
    
 // Definir las instrucciones con la cantidad y tipo de argumentos
 instruction
-    : POP                    # PopInstruction
-    | SWP                    # SwpInstruction
-    | BLD INT INT            # BldInstruction
-    | BST INT (INT)?         # BstInstruction  // Acepta 1 o 2 INT
-    | LDV (INT | STRING | list)  # LdvInstruction   
-    | LDF ID                 # LdfInstruction   
-    | LDC                    # LdcInstruction
-    | ADD                    # AddInstruction
-    | MUL                    # MulInstruction
-    | DIV                    # DivInstruction
-    | SUB                    # SubInstruction
-    | NEG                    # NegInstruction
-    | SGN                    # SgnInstruction
-    | EQ                     # EqInstruction    
-    | GT                     # GtInstruction    
-    | GTE                    # GteInstruction   
-    | LT                     # LtInstruction    
-    | LTE                    # LteInstruction   
-    | AND                    # AndInstruction
-    | OR                     # OrInstruction
-    | XOR                    # XorInstruction
-    | NOT                    # NotInstruction
-    | SNT                    # SntInstruction
-    | CAT                    # CatInstruction
-    | TOS                    # TosInstruction
-    | LNT                    # LntInstruction
-    | LIN                    # LinInstruction
-    | LTK                    # LtkInstruction
-    | LRK                    # LrkInstruction
-    | TOL                    # TolInstruction
-    | APP INT                # AppInstruction   
-    | PRN                    # PrnInstruction
-    | RET                    # RetInstruction
-    | HLT                    # HltInstruction
+    : POP                              # PopInstruction
+    | SWP                              # SwpInstruction
+    | BLD INT INT                      # BldInstruction
+    | BST INT (INT)?                   # BstInstruction  // Acepta 1 o 2 INT
+    | LDV (signedInt | STRING | list)  # LdvInstruction   
+    | LDF ID                           # LdfInstruction   
+    | LDC                              # LdcInstruction
+    | ADD                              # AddInstruction
+    | MUL                              # MulInstruction
+    | DIV                              # DivInstruction
+    | SUB                              # SubInstruction
+    | NEG                              # NegInstruction
+    | SGN                              # SgnInstruction
+    | EQ                               # EqInstruction    
+    | GT                               # GtInstruction    
+    | GTE                              # GteInstruction   
+    | LT                               # LtInstruction    
+    | LTE                              # LteInstruction   
+    | AND                              # AndInstruction
+    | OR                               # OrInstruction
+    | XOR                              # XorInstruction
+    | NOT                              # NotInstruction
+    | SNT                              # SntInstruction
+    | CAT                              # CatInstruction
+    | TOS                              # TosInstruction
+    | LNT                              # LntInstruction
+    | LIN                              # LinInstruction
+    | LTK                              # LtkInstruction
+    | LRK                              # LrkInstruction
+    | TOL                              # TolInstruction
+    | APP INT                          # AppInstruction   
+    | PRN                              # PrnInstruction
+    | RET                              # RetInstruction
+    | CST (number | string | cstlist)  # CstInstruction 
+    | INO (number | string | cstlist)  # InoInstruction
+    | HLT                              # HltInstruction
+    | INI ID                           # IniInstruction
+    | BR signedInt                     # BrInstruction      
+    | BT signedInt                     # BtInstruction      
+    | BF signedInt                     # BfInstruction      
+    | NOP                              # NopInstruction     
     ;
 
 // Directivas del linker/loader
@@ -88,18 +95,31 @@ TOL  : 'TOL';
 APP  : 'APP';  
 PRN  : 'PRN';
 RET  : 'RET';
+CST  : 'CST';
+INO  : 'INO';
 HLT  : 'HLT';
+INI  : 'INI';
+BR   : 'BR';
+BT   : 'BT';
+BF   : 'BF';
+NOP  : 'NOP';
 
 // Definir los token básicos
 DOLLAR  : '$';
 INT     : [0-9]+;
 STRING  : '"' .*? '"';
-COLON   : ':';  
+COLON   : ':';
+SIGN : '+' | '-';
 WS      : [ \t\r\n]+ -> skip;
+
+// Casting identifier token
+number : 'number';
+string : 'string';
+cstlist : 'list';
 
 // Definir la regla para listas
 list
-    : '[' value (',' value)* ']'  # ListDefinition
+    : '[' value? (',' value?)* ']'  # ListDefinition
     ;
 
 value
@@ -107,6 +127,8 @@ value
     | STRING
     ;
 
+signedInt
+    : (SIGN)? INT;  // Puede incluir un signo opcional '+' o '-'
 
 // Comentarios de una línea (inician con ; y terminan con newline)
 COMMENT : ';' .*? '\n' -> channel(HIDDEN);
