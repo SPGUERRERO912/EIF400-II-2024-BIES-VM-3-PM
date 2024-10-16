@@ -11,7 +11,7 @@ Para preparar y construir el proyecto, sigue estos pasos:
    ```bash
    "build": "npm install && npm run prepare && java -jar 'C:/Users/sebas/Desktop/EIF400-II-2024-BIES-VM-3-PM/lib/antlr-4.13.1-complete.jar' -Dlanguage=JavaScript BIESVM.g4 -visitor && node index.js"
    
-4. Ejecuta el siguiente comando para llevar a cabo el proceso de build automatizado:
+3. Ejecuta el siguiente comando para llevar a cabo el proceso de build automatizado:
 
    ```bash
    npm run build
