@@ -1,0 +1,31 @@
+{
+  "name": "eif400-ii-2024-bies-vm-3-pm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint \"src/**/*.mjs\"",
+    "format": "prettier --write \"src/**/*.mjs\"",
+    "docs": "jsdoc -c jsdoc.json",
+    "prepare": "npm run lint && npm run format && npm run test && npm run docs",
+    "build": "npm install && npm run prepare && java -jar 'C:/Users/sebas/Desktop/EIF400-II-2024-BIES-VM-3-PM/lib/antlr-4.13.1-complete.jar' -Dlanguage=JavaScript BIESVM.g4 -visitor && node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "globals": "^15.11.0",
+    "jest": "^29.7.0",
+    "jsdoc": "^4.0.3",
+    "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "antlr4": "^4.13.2"
+  }
+}

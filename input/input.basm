@@ -1,0 +1,7 @@
+$FUN $0 args : 0 parent : $0
+
+LDV 4
+LDV [1,2,"Hola"]
+LIN
+PRN
+$END $0
