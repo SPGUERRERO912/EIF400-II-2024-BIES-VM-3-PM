@@ -1,9 +1,4 @@
 # EIF400 II 2024 BIESVM P1 3:00 PM - Joel Ramirez Vargas
-<h6><small>UNA. Escuela de Informática.
-EIF400-II-2024. 
-Paradigmas de Programación.
-Proyecto BiesVM Anexo II Sobre Branches
-17/09/2024</small></h6>
 ### Integrantes 50994
 - Joel Ramírez Vargas 119020788 [Coordinador]
 - Marco Leandro Chacón 118510803
