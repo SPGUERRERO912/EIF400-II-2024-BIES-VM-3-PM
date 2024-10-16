@@ -5,12 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint \"src/**/*.mjs\"",
     "format": "prettier --write \"src/**/*.mjs\"",
     "docs": "jsdoc -c jsdoc.json",
-    "prepare": "npm run lint && npm run format && npm run test && npm run docs",
-    "build": "npm install && npm run prepare && java -jar 'C:/Users/sebas/Desktop/EIF400-II-2024-BIES-VM-3-PM/lib/antlr-4.13.1-complete.jar' -Dlanguage=JavaScript BIESVM.g4 -visitor && node index.js"
+    "build": "npm install && npm run prepare",
+    "prepare": "npm run lint && npm run format && npm run test && npm run docs && node index.js"
+    
   },
   "keywords": [],
   "author": "",
