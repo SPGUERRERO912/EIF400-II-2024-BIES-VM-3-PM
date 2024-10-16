@@ -12,7 +12,7 @@ Para preparar y construir el proyecto, sigue estos pasos:
 
 1. Clona el repositorio y navega a la raíz del proyecto.
 2. Generación de archivos de ANTLR4:
-  - **WARNING:** Asegúrate de cambiar la ruta completa en el siguiente comando a la ubicación donde se encuentra el archivo `antlr-4.13.1-complete.jar` en tu sistema:
+  - **Nota Importante:** Asegúrate de cambiar la ruta completa en el siguiente comando a la ubicación donde se encuentra el archivo `antlr-4.13.1-complete.jar` en tu sistema:
   
      ```bash
     cd grammar
@@ -25,7 +25,7 @@ Para preparar y construir el proyecto, sigue estos pasos:
    npm run build
 
 4. Para la ejecución individual de un input(.basm) y realizar su depuración. Se pueden visualizar salida.log y errores.log al ejecutar el siguiente comando:
-  - **WARNING:**
+  - **Nota Importante:**
     - `--o outfile` : las salidas de `print` (sysout) en el archivo `outfile`
     - `--e errfile` : las salidas de errores (syserr) en el archivo `errfile`
     - `--trace level`: 
