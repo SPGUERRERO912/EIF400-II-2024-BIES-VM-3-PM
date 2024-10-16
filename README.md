@@ -16,7 +16,7 @@ Para preparar y construir el proyecto, sigue estos pasos:
   
      ```bash
     cd grammar
-    java -jar "C:/Users/sebas/Desktop/EIF400-II-2024-BIES-VM-3-PM/lib/antlr-4.13.1-complete.jar" -Dlanguage=JavaScript BIESVM.g4 -visitor
+    java -jar "C:../EIF400-II-2024-BIES-VM-3-PM/lib/antlr-4.13.1-complete.jar" -Dlanguage=JavaScript BIESVM.g4 -visitor
     cd ../
    
 3. Ejecuta el siguiente comando para llevar a cabo el proceso de build automatizado(realizando además la bateria de test cases agregados en el codigo):
