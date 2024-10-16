@@ -3,7 +3,8 @@
 - Joel Ramírez Vargas 119020788 [Coordinador]
 - Marco Leandro Chacón 118510803
 - Sebastián Peñaranda Guerrero 118440262
-- Valentina Hernández Quesada 118710693    
+- Valentina Hernández Quesada 118710693
+Se utilizó apoyo de ChatGPT para la construcción del proyecto en Node.js, específicamente para integrar herramientas como Jest, Lint y Prettier. Además, de para obtener soporte en tareas relacionadas con la consola.
 ## Proceso de Build Automatizado Completo
 
 Para preparar y construir el proyecto, sigue estos pasos:
