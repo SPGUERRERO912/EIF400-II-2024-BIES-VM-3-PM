@@ -24,3 +24,13 @@ Para preparar y construir el proyecto, sigue estos pasos:
    ```bash
    npm run build
 
+4. Para la ejecución individual de un input(.basm) y poder visualizar los logs de salida y errores ejecutar el siguiente comando:
+  - **WARNING:**
+    - `--o outfile` : las salidas de `print` (sysout) en el archivo `outfile`
+    - `--e errfile` : las salidas de errores (syserr) en el archivo `errfile`
+    - `--trace level`: 
+      - En `level == 0`  no hay trace (ese es el default).
+      - En `level == 1`cada vez que va a ejecutar una instruccion indica (en syserr) el `$id` de la función siendo ejecutada y la instrucción actual.
+   ```bash
+   node index.js --o salida.log --e errores.log --trace 1 input/testcase2.basm
+
