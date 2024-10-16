@@ -1,4 +1,4 @@
-$FUN $0 args : 0 parent : $0
+$FUN $0 args : 0 parent : $0 
 LDV 666
 BST 0 0 ; let x = 1
 LDF $1 ;crea clausura de $1 (denotamos como [$1]) y pone en pila
