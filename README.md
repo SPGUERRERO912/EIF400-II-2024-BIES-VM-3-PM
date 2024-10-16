@@ -24,7 +24,7 @@ Para preparar y construir el proyecto, sigue estos pasos:
    ```bash
    npm run build
 
-4. Para la ejecución individual de un input(.basm) y poder visualizar los logs de salida y errores ejecutar el siguiente comando:
+4. Para la ejecución individual de un input(.basm) y realizar su depuración. Se pueden visualizar salida.log y errores.log al ejecutar el siguiente comando:
   - **WARNING:**
     - `--o outfile` : las salidas de `print` (sysout) en el archivo `outfile`
     - `--e errfile` : las salidas de errores (syserr) en el archivo `errfile`
