@@ -1,5 +1,5 @@
 # EIF400 II 2024 BIESVM P1 3:00 PM - Joel Ramirez Vargas
-### Integrantes 50994
+### Integrantes del grupo 05 NRC 50994
 - Joel Ramírez Vargas 119020788 [Coordinador]
 - Marco Leandro Chacón 118510803
 - Sebastián Peñaranda Guerrero 118440262
