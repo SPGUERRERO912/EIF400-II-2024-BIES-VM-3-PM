@@ -67,12 +67,12 @@ export class VM {
           ];
           const value = this.environment[envIndex][valueIndex];
           this.register.push(value);
-          this.environment[envIndex][valueIndex] = [];
         },
       ],
       [
         'ADD',
-        () => this.register.push(this.register.pop() + this.register.pop()),
+        () => this.register.push(this.register.pop() + this.register.pop())
+        ,
       ],
       [
         'MUL',
@@ -111,7 +111,7 @@ export class VM {
         'GT',
         () => {
           this.register.push(
-            this.register.shift() > this.register.pop() ? 1 : 0
+            this.register.shift() - 1 > this.register.pop() ? 1 : 0
           );
         },
       ],
@@ -119,7 +119,7 @@ export class VM {
         'GTE',
         () => {
           this.register.push(
-            this.register.shift() >= this.register.pop() ? 1 : 0
+            this.register.shift() - 1 >= this.register.pop() ? 1 : 0
           );
         },
       ],
