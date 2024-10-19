@@ -1,0 +1,12 @@
+;$3 = Math.abs
+$FUN $0 args : 1 parent: $0
+LDV Math.pi
+PRN
+LDV Math.euNum
+PRN
+LDV Math.phi
+PRN
+LDV Math.euConst
+PRN
+HLT
+$END $0

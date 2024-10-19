@@ -24,12 +24,24 @@ export class VM {
           const value = parts[1]; // Obtener el valor después de LDV
           // Verificar si el valor es un número con signo
           const isSignedNumber = /^[-+]?\d+$/.test(value); // Detectar enteros con signo (positivo o negativo)
-
+          const isMathConst = /Math/.test(value);
           if (isSignedNumber) {
             // Es un número con signo, convertirlo a entero
             const num = parseInt(value, 10);
             this.register.push(num);
-          } else if (value.startsWith('"') && value.endsWith('"')) {
+          }
+          else if(isMathConst) {
+            const constValue = value.split('.')[1];
+            const valToInsert = new Map([
+              ['pi', () => this.register.push(Math.PI)],
+              ['euNum', () => this.register.push(Math.E)],
+              ['euConst', () => this.register.push(0.57721)],  
+              ['phi', () => this.register.push(1.61803)]       
+            ]);
+
+            valToInsert.has(constValue) && valToInsert.get(constValue)();
+          }
+          else if (value.startsWith('"') && value.endsWith('"')) {
             // Es una cadena, remover comillas si es necesario
             const str = value.replace(/^"|"$/g, ''); // Remover comillas dobles
             this.register.push(str);
@@ -70,8 +82,7 @@ export class VM {
       ],
       [
         'ADD',
-        () => this.register.push(this.register.pop() + this.register.pop())
-        ,
+        () => this.register.push(this.register.pop() + this.register.pop()),
       ],
       [
         'MUL',
