@@ -238,6 +238,16 @@ class PrintVisitor extends BIESVMVisitor {
     this.instructions.push('SNT');
     return null;
   }
+  visitStkInstruction() {
+    this.trace('Add Instruction: STK');
+    this.instructions.push('STK');
+    return null;
+  }
+  visitSrkInstruction() {
+    this.trace('Add Instruction: SRK');
+    this.instructions.push('SRK');
+    return null;
+  }
 
   visitCatInstruction() {
     this.trace('Add Instruction: CAT');

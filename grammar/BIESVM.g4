@@ -34,6 +34,8 @@ instruction
     | XOR                              # XorInstruction
     | NOT                              # NotInstruction
     | SNT                              # SntInstruction
+    | STK                              # StkInstruction
+    | SRK                              # SrkInstruction
     | CAT                              # CatInstruction
     | TOS                              # TosInstruction
     | LNT                              # LntInstruction
@@ -85,6 +87,8 @@ OR   : 'OR';
 XOR  : 'XOR';
 NOT  : 'NOT';
 SNT  : 'SNT';
+STK  : 'STK';
+SRK  : 'SRK';
 CAT  : 'CAT';
 TOS  : 'TOS';
 LNT  : 'LNT';                  
