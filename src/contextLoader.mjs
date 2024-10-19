@@ -13,6 +13,7 @@ export class ContextLoader {
       this.args = this.vm.callStack.map((item) => item.args)[0];
       this.registerCopy = [...this.vm.register];
       this.locals = this.registerCopy.slice(-this.args).reverse();
+      func.instructions.isLoaded = true; 
       this.newEnvironment = Array.from({ length: 10 }, (_, index) =>
         this.args > 0 && this.locals[index] !== undefined
           ? this.locals[index]

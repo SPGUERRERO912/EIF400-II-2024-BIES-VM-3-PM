@@ -7,9 +7,9 @@ export class ContextHandler {
 
   saveContext() {
     const currentContext = {
-      environment: [...this.vm.environment],
+      environment: this.vm.environment.map(env => [...env]),
       programCounter: this.vm.programCounter,
-      callStack: this.vm.callStack,
+      callStack: [...this.vm.callStack],
     };
     this.contextStack.push(currentContext);
   }

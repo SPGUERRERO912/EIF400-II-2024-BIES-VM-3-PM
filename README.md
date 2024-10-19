@@ -32,5 +32,5 @@ Para preparar y construir el proyecto, sigue estos pasos:
       - En `level == 0`  no hay trace (ese es el default).
       - En `level == 1`cada vez que va a ejecutar una instruccion indica (en syserr) el `$id` de la función siendo ejecutada y la instrucción actual.
    ```bash
-   node index.js --o salida.log --e errores.log --trace 1 input/testcase2.basm
+   node index.js --o salida.log --e errores.log --trace 1 input/testcase1.basm
 

@@ -15,6 +15,7 @@ export class VM {
   }
 
   execute(instruction) {
+    
     if (this.halted) return; // Detener ejecución si ya se ha llamado HLT
     const parts = instruction.split(' ');
     const actions = new Map([
@@ -22,7 +23,6 @@ export class VM {
         'LDV',
         () => {
           const value = parts[1]; // Obtener el valor después de LDV
-
           // Verificar si el valor es un número con signo
           const isSignedNumber = /^[-+]?\d+$/.test(value); // Detectar enteros con signo (positivo o negativo)
 
@@ -419,20 +419,21 @@ export class VM {
   }
 
   run(instructions) {
+    const checkFunctionBounds = (instructions) => 
+      ['$FUN', '$END'].every(keyword => instructions.includes(keyword));
     for (let i = this.programCounter; i < instructions.length; i++) {
       this.programCounter = i; // Actualizar el PC antes de ejecutar cada instrucción
       this.execute(instructions[i]);
       if (this.halted) break;
+      this.programCounter = (!checkFunctionBounds(instructions) && instructions.isLoaded != true && !this.jumpOccurred)
+      ? 0 
+      : this.programCounter;
       if (this.jumpOccurred) {
-        // Si ocurrió un salto, salir del ciclo
-        this.jumpOccurred = false; // Reiniciar la bandera después del salto
-        break;
+        i = this.programCounter;
+        this.jumpOccurred = false; 
       }
     }
-    this.programCounter == instructions.length - 1
-      ? (this.programCounter = 0)
-      : 0;
-
+    
     if (!this.halted && this.functions['$0'] && this.currentFunction === null) {
       this.run(this.functions['$0'].instructions);
     } else if (!this.halted && !this.currentFunction) {

@@ -8,9 +8,9 @@ import { VM } from '../src/VM.mjs';
 
 class PrintVisitor extends BIESVMVisitor {
   /**
-     * Crea una instancia de PrintVisitor.
-     * @param {number} traceLevel - El nivel de traza.
-  */
+   * Crea una instancia de PrintVisitor.
+   * @param {number} traceLevel - El nivel de traza.
+   */
   constructor(traceLevel = 0) {
     super();
     this.instructions = [];
