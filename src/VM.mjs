@@ -15,7 +15,6 @@ export class VM {
   }
 
   execute(instruction) {
-    
     if (this.halted) return; // Detener ejecución si ya se ha llamado HLT
     const parts = instruction.split(' ');
     const actions = new Map([
@@ -178,6 +177,38 @@ export class VM {
               ? 1
               : 0
           );
+        },
+      ],
+      [
+        'STK',
+        () => {
+          const k = this.register.pop();
+          const str = this.register.pop();
+          if (typeof str === 'string' && typeof k === 'number') {
+            if (k >= 0 && k < str.length) {
+              this.register.push(str[k]);
+            } else {
+              throw new Error('STK: Índice fuera de rango.');
+            }
+          } else {
+            throw new Error('STK: K no es un número o V no es un string.');
+          }
+        },
+      ],
+      [
+        'SRK',
+        () => {
+          const k = this.register.pop() + 1;
+          const str = this.register.pop();
+          if (typeof str === 'string' && typeof k === 'number') {
+            if (k >= 0 && k <= str.length) {
+              this.register.push(str.slice(k));
+            } else {
+              throw new Error('SRK: Índice fuera de rango.');
+            }
+          } else {
+            throw new Error('SRK: K no es un número o V no es un string.');
+          }
         },
       ],
       [
@@ -419,21 +450,24 @@ export class VM {
   }
 
   run(instructions) {
-    const checkFunctionBounds = (instructions) => 
-      ['$FUN', '$END'].every(keyword => instructions.includes(keyword));
+    const checkFunctionBounds = (instructions) =>
+      ['$FUN', '$END'].every((keyword) => instructions.includes(keyword));
     for (let i = this.programCounter; i < instructions.length; i++) {
       this.programCounter = i; // Actualizar el PC antes de ejecutar cada instrucción
       this.execute(instructions[i]);
       if (this.halted) break;
-      this.programCounter = (!checkFunctionBounds(instructions) && instructions.isLoaded != true && !this.jumpOccurred)
-      ? 0 
-      : this.programCounter;
+      this.programCounter =
+        !checkFunctionBounds(instructions) &&
+        instructions.isLoaded != true &&
+        !this.jumpOccurred
+          ? 0
+          : this.programCounter;
       if (this.jumpOccurred) {
         i = this.programCounter;
-        this.jumpOccurred = false; 
+        this.jumpOccurred = false;
       }
     }
-    
+
     if (!this.halted && this.functions['$0'] && this.currentFunction === null) {
       this.run(this.functions['$0'].instructions);
     } else if (!this.halted && !this.currentFunction) {
