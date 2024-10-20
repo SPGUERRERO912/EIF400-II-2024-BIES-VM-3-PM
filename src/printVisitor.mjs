@@ -439,7 +439,7 @@ class PrintVisitor extends BIESVMVisitor {
   }
 }
 
-function test_parser(traceLevel = 0, input_file = './input/testcase3.basm') {
+function test_parser(traceLevel = 0, input_file = './input/testcase_sqrtEq.basm') {
   const input = fs.readFileSync(input_file, 'utf-8');
 
   const chars = new antlr4.InputStream(input);
