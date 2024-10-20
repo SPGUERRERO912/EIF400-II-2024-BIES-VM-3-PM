@@ -102,10 +102,9 @@ class PrintVisitor extends BIESVMVisitor {
       const value = signedInt.INT().getText(); // Obtener el número
       this.trace(`Load Variable Instruction (int): LDV ${value}`);
       this.instructions.push(`LDV ${sign}${value}`);
-    }
-    else {
+    } else {
       const mathConst = ctx.mathConst().getText();
-      this.instructions.push(`LDV ${mathConst}`)
+      this.instructions.push(`LDV ${mathConst}`);
     }
   }
 
@@ -440,7 +439,7 @@ class PrintVisitor extends BIESVMVisitor {
   }
 }
 
-function test_parser(traceLevel = 0, input_file = './input/testcase_sqrtEq.basm') {
+function test_parser(traceLevel = 0, input_file = './input/testcase3.basm') {
   const input = fs.readFileSync(input_file, 'utf-8');
 
   const chars = new antlr4.InputStream(input);
