@@ -90,11 +90,11 @@ export class VM {
       ],
       [
         'DIV',
-        () => this.register.push(this.register.pop() / this.register.pop()),
+        () => this.register.push(this.register.shift() / this.register.pop()),
       ],
       [
         'SUB',
-        () => this.register.push(this.register.pop() - this.register.pop()),
+        () => this.register.push(this.register.shift() - this.register.pop()),
       ],
       [
         'NEG',
