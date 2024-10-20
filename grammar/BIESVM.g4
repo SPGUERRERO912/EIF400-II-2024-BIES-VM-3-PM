@@ -110,7 +110,7 @@ NOP  : 'NOP';
 
 // Definir los token básicos
 DOLLAR  : '$';
-INT     : [0-9]+;
+INT     : [0-9]+ ( '.' [0-9]+ )?;
 STRING  : '"' .*? '"';
 COLON   : ':';
 SIGN : '+' | '-';

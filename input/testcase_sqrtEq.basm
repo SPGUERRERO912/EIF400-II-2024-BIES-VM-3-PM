@@ -1,9 +1,7 @@
-;$3 = Math.abs
 $FUN $0 args:1 parent:$0
-LDV 4
-LDV 3
-SUB
-
+LDV 1.25
+LDV 2
+MUL
 PRN
 HLT
 $END $0
