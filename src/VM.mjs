@@ -184,7 +184,7 @@ export class VM {
         () => {
           this.register.push(
             typeof this.register.pop() === 'string' &&
-              this.register.pop() === ''
+              this.register.pop() === undefined
               ? 1
               : 0
           );
@@ -198,11 +198,7 @@ export class VM {
           if (typeof str === 'string' && typeof k === 'number') {
             if (k >= 0 && k < str.length) {
               this.register.push(str[k]);
-            } else {
-              throw new Error('STK: Índice fuera de rango.');
             }
-          } else {
-            throw new Error('STK: K no es un número o V no es un string.');
           }
         },
       ],
