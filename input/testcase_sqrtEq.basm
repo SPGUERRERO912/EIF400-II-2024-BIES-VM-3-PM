@@ -23,8 +23,8 @@ BLD 0 1          ;
 ADD              ;  
 LDV 2
 DIV
-BST 0 1          ; (guess + number / guess) / 2
-BR -18
+BST 0 1
+BR -19
 BLD 0 1
 PRN
 HLT

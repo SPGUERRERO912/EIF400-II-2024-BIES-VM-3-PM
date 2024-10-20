@@ -68,7 +68,6 @@ export class VM {
         () =>
           (this.environment[parseInt(parts[1], 10)][parseInt(parts[2], 10)] =
             this.register.pop()),
-          console.log(this.register)
       ],
       [
         'BLD',
@@ -79,7 +78,6 @@ export class VM {
           ];
           const value = this.environment[envIndex][valueIndex];
           this.register.push(value);
-          console.log(this.register)
         },
       ],
       [
