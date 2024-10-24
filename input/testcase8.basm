@@ -45,7 +45,7 @@ BST 0 0         ; save 'res'
 LDV 2           ; i = 2
 BST 0 1         ; save 'i'
 BLD 0 1         ; load 'i' | start loop
-BLD 2 0         ; load 'arg'
+BLD 1 0         ; load 'arg'
 LTE             ; (i < arg)?
 BF +9           
 BLD 0 0         ; load 'res'
