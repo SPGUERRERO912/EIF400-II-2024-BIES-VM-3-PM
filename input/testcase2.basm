@@ -1,5 +1,5 @@
 $FUN $0 args : 1 parent : $0
-LDV 2
+LDV 82
 BST 0 0
 LDF $1
 BST 0 1
@@ -10,6 +10,10 @@ HLT
 $END $0
 
 $FUN $1 args : 1 parent : $0
+BLD 1 0
+LDV 0
+EQ
+BT +38
 LDV 0.0000000001
 BST 0 0
 LDF $2
@@ -47,6 +51,8 @@ MUL ;better_approx
 BST 0 4
 BR -20
 BLD 0 4
+RET
+LDV "NaN"
 RET
 $END $1
 
