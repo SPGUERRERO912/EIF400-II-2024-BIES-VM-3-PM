@@ -1,13 +1,7 @@
 let q = 5
 let {
-	const x = 10
-	const y = 11
-	const splash = (msg) => print(msg)
 	const greetings = () => 20+20
-} in {
-	print("*** Testing max("+ x + " ," + y + ") ***")
-	//print(max(x, y))
-	splash(10+10)
-	print(greetings())
-}
-print(q)
+} in print(greetings())
+print("Imprimiendo separacion de let in")
+let {
+} in print("Testing let in.....")

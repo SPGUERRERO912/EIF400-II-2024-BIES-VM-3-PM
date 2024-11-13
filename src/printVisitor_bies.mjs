@@ -64,7 +64,8 @@ class BytecodeVisitor extends BiesVisitor {
                 const buildVarBytecode = (varIndex) => {
                     return `BLD ${this.getParentIndex() == 0 
                         ? this.getParentIndex() 
-                        : targetBytecode.identifier.includes('LET-IN') ? 0 : 1} ${varIndex} ; cargar ${varName}`;
+                        : targetBytecode.identifier.includes('LET-IN') 
+                        ? 0 : 1} ${varIndex} ; cargar ${varName}`;
                 };
                 const loadVarOrFunction = (varIndex) => {
                     if (varIndex?.type === "function") {

@@ -13,7 +13,7 @@ statement
 
 varDeclaration
     : 'let' ID '=' valueExpression                                
-    | 'let' '{' constDeclaration* '}' 'in' '{' statement+ '}'     
+    | 'let' '{' constDeclaration* '}' 'in' ( '{' statement+ '}' | statement )
     ;
 
 printStatement
