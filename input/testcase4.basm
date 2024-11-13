@@ -1,5 +1,5 @@
 $FUN $0 args : 0 parent : $0
-LDV "undefineddenifednu"
+LDV "hello world dlrow olleh"
 BST 0 0 ;guardar undefined
 LDF $1 ;guardamos dolar 1
 BST 0 1

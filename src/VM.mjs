@@ -22,7 +22,8 @@ export class VM {
       [
         'LDV',
         () => {
-          const value = parts[1]; // Obtener el valor después de LDV
+          // const value = parts[1]; // Obtener el valor después de LDV
+          const value = instruction.slice(4).trim();
           // Verificar si el valor es un número con signo
           const isSignedNumber = /^[-+]?\d+$/.test(value); // Detectar enteros con signo (positivo o negativo)
           const isMathConst = /Math/.test(value);

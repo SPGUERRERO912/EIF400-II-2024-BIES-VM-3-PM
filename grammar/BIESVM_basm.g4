@@ -1,4 +1,4 @@
-grammar BIESVM;
+grammar BIESVM_basm;
 
 // Definir la entrada del parser
 program : (directive | instruction)+ EOF;
@@ -111,7 +111,7 @@ NOP  : 'NOP';
 // Definir los token básicos
 DOLLAR  : '$';
 INT     : [0-9]+ ( '.' [0-9]+ )?;
-STRING  : '"' .*? '"';
+STRING : '"' ( ~["\\] | '\\' . )* '"';
 COLON   : ':';
 SIGN : '+' | '-';
 WS      : [ \t\r\n]+ -> skip;

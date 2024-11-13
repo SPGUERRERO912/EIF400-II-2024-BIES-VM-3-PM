@@ -1,9 +1,9 @@
 import fs from 'fs';
 import antlr4 from 'antlr4';
 
-import BIESVMLexer from '../grammar/BIESVMLexer.js';
-import BIESVMParser from '../grammar/BIESVMParser.js';
-import BIESVMVisitor from '../grammar/BIESVMVisitor.js';
+import BIESVMLexer from '../grammar/BIESVM_basmLexer.js';
+import BIESVMParser from '../grammar/BIESVM_basmParser.js';
+import BIESVMVisitor from '../grammar/BIESVM_basmVisitor.js';
 import { VM } from '../src/VM.mjs';
 
 class PrintVisitor extends BIESVMVisitor {
@@ -439,7 +439,7 @@ class PrintVisitor extends BIESVMVisitor {
   }
 }
 
-function test_parser(traceLevel = 0, input_file = './input/testcase8.basm') {
+function test_parser(traceLevel = 0, input_file = './input_bies/testcase1.basm') {
   const input = fs.readFileSync(input_file, 'utf-8');
 
   const chars = new antlr4.InputStream(input);
