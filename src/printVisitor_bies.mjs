@@ -93,26 +93,38 @@ class BytecodeVisitor extends BiesVisitor {
         }
     }
 
-    handleFunctionExpression(functionExprNode, varName) {
+    handleFunctionExpression(node, varName) {
         /*Esta funcion se encarga de gestionar la creacion de una funcion, agrega el encabezado, crea el nuevo bytecode donde se van a ingresar las instrucciones,
         manda a evaluar sus statments, cierra la funcion y realiza el LDF desde donde debe ser invocada*/
+        const bodyStatement = node.statement();
         const newBytecode = { identifier: varName, code: [] };
-        this.enterFunctionContext(varName);
-        const functionNumber = this.functionCounter++;
-        const argsCount = functionExprNode.ID() ? functionExprNode.ID().length : 0;
-        newBytecode.code.push(`$FUN $${functionNumber} args : ${argsCount} parent : $${this.getParentIndex()}`);
-        newBytecode.identifier = varName;
-        this.bytecode.push(newBytecode);
-        if(functionExprNode.statement().expression()) {
-            this.loadValue(functionExprNode.statement().expression())
-        } else {
-            this.visit(functionExprNode)
-        }
-        newBytecode.code.push(`RET ; Fin de la función`);
-        newBytecode.code.push(`$END $${functionNumber}`);
-        this.exitFunctionContext();
-        const targetBytecode = this.getTargetBytecode(this.getParentIndex());
-        targetBytecode.code.push(`LDF $${functionNumber}`);
+        const functionNumber = this.functionCounter;
+        
+        // Verificación de "let" y configuración de contexto
+        const isSingleStatement = !bodyStatement.getText().startsWith("let");
+        const setupFunctionContext = () => {
+            const argsCount = node.ID() ? node.ID().length : 0;
+            newBytecode.code.push(`$FUN $${functionNumber} args : ${argsCount} parent : $${this.getParentIndex()}`);
+            this.enterFunctionContext(varName);
+            this.bytecode.push(newBytecode);
+        };
+
+        // Generación del código de retorno y finalización de contexto
+        const finalizeFunctionContext = () => {
+            newBytecode.code.push(`RET ; Fin de la función`);
+            newBytecode.code.push(`$END $${functionNumber}`);
+            this.exitFunctionContext();
+            this.getTargetBytecode(this.getParentIndex()).code.push(`LDF $${functionNumber}`);
+            this.functionCounter++;
+        };
+
+        // Inicia el contexto de función si es necesario
+        isSingleStatement && setupFunctionContext();
+        // Evalúa el cuerpo de la función
+        const expressionNode = node.statement().expression();
+        expressionNode ? this.loadValue(expressionNode) : this.visit(node);
+        // Finaliza el contexto de función si es necesario
+        isSingleStatement && finalizeFunctionContext();
     }
 
     visitVarDeclaration(ctx) {
@@ -139,7 +151,7 @@ class BytecodeVisitor extends BiesVisitor {
             newBytecode.code.push(`$FUN $${functionNumber} args : ${argsCount} parent : $${this.getParentIndex()}`);
             this.bytecode.push(newBytecode);
             newBytecode.identifier = varName;
-            const targetBytecode = this.getTargetBytecode(); //getTargetBytecode nos trae el contexto donde debemos invocar el let in para cargarle el LDF y APP
+            const targetBytecode = this.contextStack ? this.getTargetBytecode(this.getParentIndex()) : this.getTargetBytecode(); //getTargetBytecode nos trae el contexto donde debemos invocar el let in para cargarle el LDF y APP
             targetBytecode.code.push(`LDF $${functionNumber}`);
             targetBytecode.code.push(`APP ${argsCount} ; Ejecutamos let-in con ${argsCount} argumentos`)
             this.enterFunctionContext(varName);
@@ -272,8 +284,12 @@ class BytecodeVisitor extends BiesVisitor {
         });
         this.exitFunctionContext() //cambiamos de contexto, retornamos al anterior 
         this.handleFunctionExpression(functionData.node, functionName);
-        const targetBytecode = this.getTargetBytecode(this.getParentIndex());
-        targetBytecode.code.push(`APP ${args.length} ; Ejecutamos ${functionName} con ${args.length} argumentos`); //al llamarse handle, handle realiza el LDF
+        const bodyStatement = functionData.node.statement();
+        if (!(bodyStatement.getText().startsWith("let"))) {
+            const targetBytecode = this.getTargetBytecode(this.getParentIndex());
+            targetBytecode.code.push(`APP ${args.length} ; Ejecutamos ${functionName} con ${args.length} argumentos`); //al llamarse handle, handle realiza el LDF
+        }
+        
         return null;
     }
 

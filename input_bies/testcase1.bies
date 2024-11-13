@@ -1,7 +1,14 @@
 let q = 5
 let {
-	const greetings = () => 20+20
-} in print(greetings())
-print("Imprimiendo separacion de let in")
-let {
-} in print("Testing let in.....")
+	const x = 10
+	const y = 11
+	const splash = (msg) => print(msg)
+	const greetings = () => 
+		      let {const greet = 666 
+			  } in print(greet)
+} in {
+	print("*** Testing max("+ x + " ," + y + ") ***")
+	greetings()
+	splash(10+11)
+}
+print(q)
