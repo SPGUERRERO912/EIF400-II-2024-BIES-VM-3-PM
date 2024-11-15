@@ -62,7 +62,7 @@ class BytecodeVisitor extends BiesVisitor {
                 const varName = transformedNode.ID().getText();
                 const getVarIndex = (name) => this.variableMap.has(name) ? this.variableMap.get(name) : null;
                 const buildVarBytecode = (varIndex) => {
-                    return `BLD ${this.getParentIndex() == 0 
+                    return `BLD ${((this.getParentIndex() == 0 && !this.contextStack) || targetBytecode.identifier == 'main') 
                         ? this.getParentIndex() 
                         : targetBytecode.identifier.includes('LET-IN') 
                         ? 0 : 1} ${varIndex} ; cargar ${varName}`;
@@ -75,16 +75,20 @@ class BytecodeVisitor extends BiesVisitor {
                 };
                 return loadVarOrFunction(getVarIndex(varName));
             },
+            BRANCH_STATEMENT: () => {
+                this.visit(transformedNode)
+            },
             EXPRESSION: () => this.visitValueExpression(transformedNode)
         };
-    
+
         // Determinar el tipo basado en el nodo transformado y cargar el valor
         const type = transformedNode.INT ? "INT" :
-                     transformedNode.FLOAT ? "FLOAT" :
-                     transformedNode.STRING ? "STRING" :
-                     transformedNode.ID ? "ID" :
-                     transformedNode.expression ? "EXPRESSION" :
-                     null;
+                    transformedNode.FLOAT ? "FLOAT" :
+                    transformedNode.STRING ? "STRING" :
+                    transformedNode.ID ? "ID" :
+                    transformedNode.getText().includes('if') ? "BRANCH_STATEMENT" :
+                    transformedNode.expression ? "EXPRESSION" :
+                    null;
         if (type && loaders[type]) {
             loaders[type]();
             /*Después de cargar el valor, registrar y hacer el push de BST si es necesario. ¿Como sé si es 
@@ -96,14 +100,18 @@ class BytecodeVisitor extends BiesVisitor {
     handleFunctionExpression(node, varName) {
         /*Esta funcion se encarga de gestionar la creacion de una funcion, agrega el encabezado, crea el nuevo bytecode donde se van a ingresar las instrucciones,
         manda a evaluar sus statments, cierra la funcion y realiza el LDF desde donde debe ser invocada*/
-        const bodyStatement = node.statement();
+        const bodyStatement = node.statement 
+                            ? node.statement() 
+                            : node.functionExpression().statement().expression()
         const newBytecode = { identifier: varName, code: [] };
         const functionNumber = this.functionCounter;
-        
         // Verificación de "let" y configuración de contexto
         const isSingleStatement = !bodyStatement.getText().startsWith("let");
         const setupFunctionContext = () => {
-            const argsCount = node.ID() ? node.ID().length : 0;
+            const argsCount = node.ID 
+                            ? node.ID().length 
+                            : node.functionExpression().ID().length ? 0
+                            : 0
             newBytecode.code.push(`$FUN $${functionNumber} args : ${argsCount} parent : $${this.getParentIndex()}`);
             this.enterFunctionContext(varName);
             this.bytecode.push(newBytecode);
@@ -121,7 +129,7 @@ class BytecodeVisitor extends BiesVisitor {
         // Inicia el contexto de función si es necesario
         isSingleStatement && setupFunctionContext();
         // Evalúa el cuerpo de la función
-        const expressionNode = node.statement().expression();
+        const expressionNode = node.statement? node.statement().expression() : node.functionExpression().statement().expression();
         expressionNode ? this.loadValue(expressionNode) : this.visit(node);
         // Finaliza el contexto de función si es necesario
         isSingleStatement && finalizeFunctionContext();
@@ -131,9 +139,50 @@ class BytecodeVisitor extends BiesVisitor {
         /*Gestiona la visita de una variable let, hay dos tipos let = y let {} in {}. No gestiona const = o const = let {} in {} porque los
         const son variables que solo pueden existir dentro de un bloque let in, esas son procesadas dentro del if utilizando processValue y
         registerFunctionIfExists*/
-        const registerFunctionIfExists = (valueNode, varName) => 
-            valueNode.expression?.().functionExpression && 
-            this.variableMap.set(varName, { node: valueNode.expression().functionExpression(), type: 'function' });
+        const registerFunctionIfExists = (valueNode, varName) => {
+            const countNestedLambdas = (node) => {
+                let count = 0;
+                let ids = [];
+                while (node && node.functionExpression) {
+                    const innerExpression = node.functionExpression().statement().expression(0);
+                    const currentIds = [];
+                    node.functionExpression().children.forEach(child => {
+                        if (child.symbol && child.symbol.type === BiesParser.ID) {
+                            currentIds.push(child.getText());
+                        }
+                    });
+                    ids.push(currentIds); // Guardamos los IDs actuales
+            
+                    if (innerExpression) count++; // Incrementamos el contador de lambdas anidadas
+            
+                    // Verificamos si hay una lambda anidada y actualizamos el nodo
+                    if (innerExpression && innerExpression.functionExpression) {
+                        node = innerExpression;
+                    } else {
+                        break; // Salimos si ya no hay otra lambda
+                    }
+                }
+                return { count, ids };
+            };
+        
+            const { count: lambdaDepth, ids: lambdaIds } = countNestedLambdas(valueNode.expression());
+            if (lambdaDepth > 1) {
+                this.variableMap.set(varName, { 
+                    node: valueNode.expression(), 
+                    type: 'nestedLambda', 
+                    lambdaDepth: lambdaDepth,
+                    lambdaIds: lambdaIds // Guardamos todos los IDs en cada nivel de anidación
+                });
+                return true; // Indicamos que se registró una lambda anidada
+            } else if (valueNode.expression?.().functionExpression) {
+                this.variableMap.set(varName, { 
+                    node: valueNode.expression().functionExpression(), 
+                    type: 'function',
+                });
+                return true; // Indicamos que se registró una función
+            }
+            return false; // Indicamos que no se registró ninguna función
+        };
         const processValue = (ctx) => {
             const valueNode = ctx.valueExpression(); 
             const varName = ctx.ID().getText();
@@ -260,37 +309,108 @@ class BytecodeVisitor extends BiesVisitor {
     }
 
     visitFunctionCall(ctx) {
+        console.log("Call: ", ctx.getText())
         const functionName = ctx.ID().getText(); //nombre de la funcion
         this.enterFunctionContext(functionName) //cambiamos de contexto 
         const args = ctx.expression();
         const functionData = this.variableMap.get(functionName);
-        if (!functionData || functionData.type !== 'function') {
+        if (!functionData || (functionData.type !== 'function' && functionData.type !== 'nestedLambda')) {
             throw new Error(`${functionName} no es una función válida`);
         }
-    
-        const params = functionData.node.ID();
-        const argsCount = params ? params.length : 0; //extraigo los parametros de la funcion
-    
+        const params = functionData.lambdaDepth 
+                        ? functionData.lambdaDepth 
+                        : functionData.node.ID();
+        const argsCount = params 
+                        ? functionData.lambdaDepth 
+                        ? functionData.lambdaDepth + 1 
+                        : params.length : 0; //extraigo los parametros de la funcion
         if (argsCount !== args.length) {
             throw new Error(`La cantidad de argumentos para la función ${functionName} no coincide`);
         }
         /*Como la declaracion de una funcion no genera bytecode si no nada mas el registro en el variableMap. Al hacer el call es cuando ingreso el bytecode, si tiene
         parametros como (x, p), el bytecode no es ingresado con x y p, si no que reemplazo el identificador "x/p" por los valores asignados en el call de la funcion
         en este caso args posee el o los valores*/
-        params.forEach((paramNode, index) => {
-            const paramId = paramNode.getText();
-            const argValue = args[index];
-            this.replaceIdentifier(functionData.node, paramId, argValue);
-        });
+        //console.log("nodazo ", functionName, " ", functionData.node.ID(1).getText())
+        if (functionData.type == 'function') {
+            params.forEach((paramNode, index) => {
+                const paramId = paramNode.getText();
+                const argValue = args[index];
+                this.replaceIdentifier(functionData.node, paramId, argValue);
+            });
+        } else if (functionData.type === 'nestedLambda') {
+            functionData.lambdaIds.forEach((idList, level) => {
+                idList.forEach((id, index) => {
+                    const argValue = args[index];
+                    this.replaceIdentifier(functionData.node.functionExpression().statement().expression(), id, argValue);
+                });
+            });
+        }
+
         this.exitFunctionContext() //cambiamos de contexto, retornamos al anterior 
         this.handleFunctionExpression(functionData.node, functionName);
-        const bodyStatement = functionData.node.statement();
+        const bodyStatement =  functionData.node.statement ? functionData.node.statement() : functionData.node.functionExpression().statement();
         if (!(bodyStatement.getText().startsWith("let"))) {
             const targetBytecode = this.getTargetBytecode(this.getParentIndex());
             targetBytecode.code.push(`APP ${args.length} ; Ejecutamos ${functionName} con ${args.length} argumentos`); //al llamarse handle, handle realiza el LDF
         }
         
         return null;
+    }
+
+    visitIfExpression(ctx) {
+        const targetBytecode = this.getTargetBytecode();
+    
+        // Cargar y evaluar la condición
+        const conditionNode = ctx.expression(0);
+        const leftOperand = conditionNode.expression(0);
+        const operator = conditionNode.getChild(1).getText();
+        const rightOperand = conditionNode.expression(1);
+
+        // Cargar los operandos
+        this.loadValue(leftOperand);
+        this.loadValue(rightOperand);
+
+        // Mapa de operadores para las instrucciones correspondientes
+        const operatorMap = {
+            '>': 'GT',
+            '>=': 'GTE',
+            '<': 'LT',
+            '<=': 'LTE',
+            '==': 'EQ',
+        };
+
+        // Agregar la instrucción de comparación
+        if (operatorMap[operator]) {
+            targetBytecode.code.push(`${operatorMap[operator]} ; ejecutar comparación ${operator}`);
+        }
+
+        // Guardar la posición actual de instrucción
+        const bfJumpIndex = targetBytecode.code.length;
+
+        // Instrucción BF (salto si la condición es falsa) con un offset temporal
+        targetBytecode.code.push(`BF ? ; salto condicional a else`);
+
+        // Procesar el bloque `then`
+        const thenExpression = ctx.expression(1);
+        this.loadValue(thenExpression);
+
+        // Guardar la posición actual para el salto incondicional (BR) después del bloque `then`
+        const brJumpIndex = targetBytecode.code.length;
+
+        // Instrucción BR con un offset temporal, para saltar el bloque `else` después de `then`
+        targetBytecode.code.push(`BR ? ; salto para omitir else`);
+
+        // Calcular el offset para `BF`, y llenar el placeholder en la instrucción `BF`
+        const elseJumpOffset = targetBytecode.code.length - bfJumpIndex;
+        targetBytecode.code[bfJumpIndex] = `BF +${elseJumpOffset-1} ; salto condicional a else`;
+
+        // Procesar el bloque `else`
+        const elseExpression = ctx.expression(2);
+        this.loadValue(elseExpression);
+
+        // Calcular el offset para `BR` y llenar el placeholder en la instrucción `BR`
+        const endJumpOffset = targetBytecode.code.length - brJumpIndex;
+        targetBytecode.code[brJumpIndex] = `BR +${endJumpOffset-1} ; salto para omitir else`;
     }
 
     /*Funciones auxiliares de soporte para los metodos principales, ninguna interactua directamente con los ctx*/
